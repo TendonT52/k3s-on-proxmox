@@ -46,11 +46,10 @@ resource "proxmox_virtual_environment_vm" "kube-controller" {
   }
 
   disk {
-    size         = "50"
-    interface    = "virtio0"
+    size         = "30"
+    interface    = "scsi0"
     datastore_id = "local-lvm"
     file_format  = "raw"
-    iothread     = true
   }
 
   efi_disk {
@@ -80,7 +79,6 @@ resource "proxmox_virtual_environment_vm" "kube-worker" {
   node_name  = "pve"
   machine    = "q35"
   bios       = "ovmf"
-  depends_on = [proxmox_virtual_environment_vm.kube-controller]
 
   agent {
     enabled = true
@@ -105,38 +103,35 @@ resource "proxmox_virtual_environment_vm" "kube-worker" {
   }
 
   disk {
-    size         = "50"
-    interface    = "virtio0"
+    size         = "30"
+    discard      = "on"
+    interface    = "scsi0"
     datastore_id = "local-lvm"
     file_format  = "raw"
-    iothread     = true
+  }
+
+  disk {
+    size         = "200"
+    discard      = "on"
+    interface    = "virtio0"
+    datastore_id = "sda"
+    file_format  = "raw"
   }
 
   disk {
     size         = "200"
     discard      = "on"
     interface    = "virtio1"
-    datastore_id = "sda"
+    datastore_id = "sdb"
     file_format  = "raw"
-    iothread     = true
   }
 
   disk {
     size         = "200"
     discard      = "on"
     interface    = "virtio2"
-    datastore_id = "sdb"
-    file_format  = "raw"
-    iothread     = true
-  }
-
-  disk {
-    size         = "200"
-    discard      = "on"
-    interface    = "virtio3"
     datastore_id = "sdc"
     file_format  = "raw"
-    iothread     = true
   }
 
   efi_disk {
